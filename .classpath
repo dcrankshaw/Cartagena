@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/Daniel/oose-cs321/CartagenaFramework/CartagenaInterface.jar">
+	<classpathentry kind="lib" path="/Users/Daniel/cartagena_secondtry/CartagenaFramework/CartagenaInterface.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="file:/Users/Daniel/oose-cs321/CartagenaFramework/doc/"/>
+			<attribute name="javadoc_location" value="file:/Users/Daniel/cartagena_secondtry/CartagenaFramework/doc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/Daniel/oose-cs321/CartagenaFramework/StandardCartagenaUI.jar"/>
+	<classpathentry kind="lib" path="/Users/Daniel/cartagena_secondtry/CartagenaFramework/StandardCartagenaUI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
