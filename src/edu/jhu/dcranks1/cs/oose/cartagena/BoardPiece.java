@@ -23,6 +23,13 @@ public class BoardPiece {
 									//obeys all rules at end of constructor in CartagenaModelImpl
 	}
 	
+	public BoardPiece(Location _myLocation, SpaceType _mySpaceType)
+	{
+		location = _myLocation;
+		currentPieces = new ArrayList<Player>();
+		spaceType = _mySpaceType;
+	}
+	
 	public BoardPiece(Location _mylocation, Collection<Player> _currentPieces, SpaceType _mySpaceType)
 	{
 		location = _mylocation;
