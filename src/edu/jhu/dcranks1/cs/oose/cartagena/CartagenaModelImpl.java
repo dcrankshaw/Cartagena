@@ -116,7 +116,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	@Override
 	public Collection<SpaceType> getCards(Player player) {
-		return cardHands.get(player);
+		return Collections.unmodifiableCollection(cardHands.get(player));
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 	@Override
 	public Collection<Player> getPieces(Location location) {
 		BoardPiece current = board.get(location.getSpaceNumber());
-		return current.getCurrentPieces();
+		return Collections.unmodifiableCollection(current.getCurrentPieces());
 	}
 
 	@Override
@@ -226,16 +226,44 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	@Override
 	public void movePieceForward(Location location, SpaceType card) {
-		/*
-		 * Check if player has that card
-		 * 		-if player has the card remove that card from her hand
-		 * Check if player has a piece on that location
-		 * Determine next unoccupied space of that type
-		 * 		-if it exists remove piece from current spot and move to next spot
-		 * 		-else move piece off the board
-		 * 
-		 */
+		Collection<SpaceType> oldHand = cardHands.remove(currentPlayer);
+		if (oldHand.contains(card)) {
+			oldHand.remove(card);
+			cardHands.put(currentPlayer, oldHand);
+			BoardPiece startLocation = board.get(location.getSpaceNumber());
+			if (startLocation.getCurrentPieces().contains(currentPlayer)) {
+				startLocation.getCurrentPieces().remove(currentPlayer);
+				for(int i = location.getSpaceNumber(); i <= Location.MAXIMUM_SPACE_NUMBER; i++)
+				{
+					BoardPiece endLocation = board.get(i);
+					if(endLocation.getCurrentPieces().size() == 0)
+					{
+						endLocation.getCurrentPieces().add(currentPlayer);
+						break;
+					}
+				}
+				
+				
+				movesLeftInTurn--;
+				boolean turnOver = false;
+				if (movesLeftInTurn == 0) {
+					turnOver = true;
+					switchTurn();
+				}
+				boolean gameOver = determineGameOver();
+				publishEvent(new CartagenaMoveEvent(turnOver, gameOver));
 
+			}
+			else {
+				publishIllegalEvent(new CartagenaIllegalMoveEvent(
+						"Player does not have any pieces on that spot"));
+			}
+		}
+		else {
+			cardHands.put(currentPlayer, oldHand);
+			publishIllegalEvent(new CartagenaIllegalMoveEvent(
+					"Player does have any " + card.toString() + "cards"));
+		}
 	}
 
 	@Override
