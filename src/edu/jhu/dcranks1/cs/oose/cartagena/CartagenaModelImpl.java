@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -35,8 +36,7 @@ import edu.jhu.cs.oose.fall2011.cartagena.iface.SpaceType;
  */
 
 public class CartagenaModelImpl implements CartagenaModel {
-	/** Keeps track of all listeners to publish state changes to. */
-	private Collection<CartagenaModelListener> allListeners;
+
 
 	/** The number of game pieces each player has. */
 	private static final int NUM_PIECES_PER_PLAYER = 6;
@@ -45,6 +45,8 @@ public class CartagenaModelImpl implements CartagenaModel {
 	private static final int NUM_LOCATIONS_PER_SEGMENT = 6;
 	/** The maximum number of cards a pl */
 	private static final int MAX_CARDS_PER_PLAYER = 6;
+	/** Keeps track of all listeners to publish state changes to. */
+	private Collection<CartagenaModelListener> allListeners;
 	private int movesLeftInTurn;
 	private List<BoardPiece> board;
 	private Map<Player, Collection<SpaceType>> cardHands;
@@ -61,6 +63,8 @@ public class CartagenaModelImpl implements CartagenaModel {
 	}
 
 	private Map<Player, Collection<SpaceType>> assignStartingHands() {
+
+		allListeners = new LinkedList<CartagenaModelListener>();
 		SpaceType[] possibleValues = SpaceType.values();
 		Map<Player, Collection<SpaceType>> startHands = new HashMap<Player, Collection<SpaceType>>();
 		Random rand = new Random();
@@ -79,9 +83,15 @@ public class CartagenaModelImpl implements CartagenaModel {
 	private List<BoardPiece> createNewBoard() {
 		List<BoardPiece> newBoard = new ArrayList<BoardPiece>();
 		Collection<Player> playerPieces = new ArrayList<Player>();
+
 		for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
 
 			playerPieces.add(Player.PLAYER_1);
+			// create collection with six pieces for each player in it, then add
+			// that to the first BoardPiece
+		}
+		for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
+			
 			playerPieces.add(Player.PLAYER_2);
 
 			// create collection with six pieces for each player in it, then add
@@ -90,24 +100,23 @@ public class CartagenaModelImpl implements CartagenaModel {
 		newBoard.add(new BoardPiece(new Location(
 				Location.INITIAL_LOCATION_SPACE_NUMBER), playerPieces, null));
 
-		for (int i = Location.INITIAL_LOCATION_SPACE_NUMBER + 1; i <= Location.MAXIMUM_SPACE_NUMBER; i++) {
-			newBoard.add(new BoardPiece(new Location(i)));
-		}
-
-		int currentLocationNumber = 1;
 		List<SpaceType> allTypes = new ArrayList<SpaceType>();
 		for (SpaceType type : SpaceType.values()) {
 			allTypes.add(type);
 		}
-		for (int i = 1; i <= Location.MAXIMUM_SPACE_NUMBER; i++) {
 
-			// every sixth space reshuffle the order of the space types
-			if (i % NUM_LOCATIONS_PER_SEGMENT == 0) {
+		for (int i = Location.INITIAL_LOCATION_SPACE_NUMBER + 1; i <= Location.MAXIMUM_SPACE_NUMBER; i++) {
+
+			if (((i - 1) % NUM_LOCATIONS_PER_SEGMENT) == 0) {
 				Collections.shuffle(allTypes);
 			}
-			BoardPiece current = newBoard.get(currentLocationNumber);
-			current.setSpaceType(allTypes.get(i % NUM_LOCATIONS_PER_SEGMENT));
+
+			BoardPiece current = new BoardPiece(new Location(i), allTypes
+					.get((i - 1) % NUM_LOCATIONS_PER_SEGMENT));
+
+			newBoard.add(current);
 		}
+
 		return newBoard;
 
 	}
@@ -126,7 +135,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	@Override
 	public Collection<SpaceType> getCards(Player player) {
-		return cardHands.get(player);
+		return Collections.unmodifiableCollection(cardHands.get(player));
 	}
 
 	@Override
@@ -137,7 +146,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 	@Override
 	public Collection<Player> getPieces(Location location) {
 		BoardPiece current = board.get(location.getSpaceNumber());
-		return current.getCurrentPieces();
+		return Collections.unmodifiableCollection(current.getCurrentPieces());
 	}
 
 	@Override
@@ -165,14 +174,13 @@ public class CartagenaModelImpl implements CartagenaModel {
 			publishIllegalEvent(new CartagenaIllegalMoveEvent(
 					"Cannot move backwards to initial position"));
 		} else if (start.getCurrentPieces().contains(currentPlayer)) {
-			if (start.getCurrentPieces().size() == 1
-					|| start.getCurrentPieces().size() == 2) {
+			if (end.getCurrentPieces().size() == 1
+					|| end.getCurrentPieces().size() == 2) {
+				drawCards(end.getCurrentPieces().size());
 				start.getCurrentPieces().remove(currentPlayer);
 				end.getCurrentPieces().add(currentPlayer);
-				drawCards(start.getCurrentPieces().size());
-				movesLeftInTurn--;
 				boolean turnOver = false;
-				if (movesLeftInTurn == 0) {
+				if (--movesLeftInTurn == 0) {
 					turnOver = true;
 					switchTurn();
 
@@ -182,7 +190,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 				publishEvent(new CartagenaMoveEvent(turnOver, false));
 			} else {
 				String message = "Cannot move backwards to a spot with "
-						+ start.getCurrentPieces().size() + " pieces on it";
+						+ end.getCurrentPieces().size() + " pieces on it";
 				publishIllegalEvent(new CartagenaIllegalMoveEvent(message));
 			}
 		} else {
@@ -214,12 +222,31 @@ public class CartagenaModelImpl implements CartagenaModel {
 	}
 
 	private boolean determineGameOver() {
+		boolean player1Victory = true;
+		boolean player2Victory = true;
 		for (int i = Location.INITIAL_LOCATION_SPACE_NUMBER; i <= Location.MAXIMUM_SPACE_NUMBER; i++) {
 			BoardPiece current = board.get(i);
-			if (current.getCurrentPieces().contains(currentPlayer))
+			if (current.getCurrentPieces().contains(Player.PLAYER_1)) {
+				player1Victory = false;
+			}
+			if (current.getCurrentPieces().contains(Player.PLAYER_2)) {
+				player2Victory = false;
+			}
+			if (!player1Victory && !player2Victory) {
+				// means the game is not over
 				return false;
+			}
 		}
-		return true;
+
+		if (player1Victory) {
+			winner = Player.PLAYER_1;
+			return true;
+		} else if (player2Victory) {
+			winner = Player.PLAYER_2;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private void publishIllegalEvent(CartagenaIllegalMoveEvent move) {
@@ -236,18 +263,49 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	@Override
 	public void movePieceForward(Location location, SpaceType card) {
-		/*
-		 * Check if player has that card
-		 * 		-if player has the card remove that card from her hand
-		 * Check if player has a piece on that location
-		 * Determine next unoccupied space of that type
-		 * 		-if it exists remove piece from current spot and move to next spot
-		 * 		-else move piece off the board
-		 * 
-		 */
+		Collection<SpaceType> oldHand = cardHands.remove(currentPlayer);
+		if (oldHand.contains(card)) {
+			oldHand.remove(card);
+			cardHands.put(currentPlayer, oldHand);
+			BoardPiece startLocation = board.get(location.getSpaceNumber());
+			if (startLocation.getCurrentPieces().contains(currentPlayer)) {
+				startLocation.getCurrentPieces().remove(currentPlayer);
+				for (int i = location.getSpaceNumber() + 1; i <= Location.MAXIMUM_SPACE_NUMBER; i++) {
+					BoardPiece endLocation = board.get(i);
+					if (endLocation.getSpaceType() != null) {
+						if (endLocation.getSpaceType().equals(card)
+								&& endLocation.getCurrentPieces().size() == 0) {
+							endLocation.getCurrentPieces().add(currentPlayer);
+							break;
+						}
 
+					}
+
+				}
+
+				boolean turnOver = false;
+				if (--movesLeftInTurn == 0) {
+					turnOver = true;
+					switchTurn();
+				}
+				boolean gameOver = determineGameOver();
+
+				publishEvent(new CartagenaMoveEvent(turnOver, gameOver));
+
+			} else {
+				publishIllegalEvent(new CartagenaIllegalMoveEvent(
+						"You do not have any pieces on that spot"));
+			}
+		} else {
+			cardHands.put(currentPlayer, oldHand);
+			publishIllegalEvent(new CartagenaIllegalMoveEvent(
+					"You do not have any " + card.toString() + "cards"));
+		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeListener(CartagenaModelListener listener) {
 		allListeners.remove(listener);
