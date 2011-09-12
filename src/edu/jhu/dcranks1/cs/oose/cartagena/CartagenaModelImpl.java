@@ -29,11 +29,21 @@ import edu.jhu.cs.oose.fall2011.cartagena.iface.Location;
 import edu.jhu.cs.oose.fall2011.cartagena.iface.Player;
 import edu.jhu.cs.oose.fall2011.cartagena.iface.SpaceType;
 
+/**
+ * Implements the game logic of Cartagena game
+ * @author Daniel Crankshaw
+ */
+
 public class CartagenaModelImpl implements CartagenaModel {
+	/** Keeps track of all listeners to publish state changes to. */
 	private Collection<CartagenaModelListener> allListeners;
 
+	/** The number of game pieces each player has. */
 	private static final int NUM_PIECES_PER_PLAYER = 6;
+	
+	/** The number of spaces in each segment of the board. No segment can have two pieces of the same type. */
 	private static final int NUM_LOCATIONS_PER_SEGMENT = 6;
+	/** The maximum number of cards a pl */
 	private static final int MAX_CARDS_PER_PLAYER = 6;
 	private int movesLeftInTurn;
 	private List<BoardPiece> board;
