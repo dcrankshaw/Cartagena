@@ -2,6 +2,7 @@ package edu.jhu.dcranks1.cs.oose.cartagena;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import edu.jhu.cs.oose.fall2011.cartagena.iface.Location;
 import edu.jhu.cs.oose.fall2011.cartagena.iface.Player;
