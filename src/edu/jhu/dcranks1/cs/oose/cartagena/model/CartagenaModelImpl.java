@@ -1,4 +1,8 @@
-package edu.jhu.dcranks1.cs.oose.cartagena;
+
+
+
+
+package edu.jhu.dcranks1.cs.oose.cartagena.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,42 +21,19 @@ import edu.jhu.cs.oose.fall2011.cartagena.iface.Location;
 import edu.jhu.cs.oose.fall2011.cartagena.iface.Player;
 import edu.jhu.cs.oose.fall2011.cartagena.iface.SpaceType;
 
-/**
- * Implements the game logic of Cartagena game
- * 
- * @author Daniel Crankshaw
- */
-
 public class CartagenaModelImpl implements CartagenaModel {
 
-	/** The number of game pieces each player has. */
 	private static final int NUM_PIECES_PER_PLAYER = 6;
-
-	/**
-	 * The number of spaces in each segment of the board. No segment can have
-	 * two pieces of the same type.
-	 */
 	private static final int NUM_LOCATIONS_PER_SEGMENT = 6;
-	/** The number of cards each player starts the game with. */
-	private static final int STARTING_HAND_SIZE = 6;
-	/** Keeps track of all listeners to publish state changes to. */
+	private static final int MAX_CARDS_PER_PLAYER = 6;
+
 	private Collection<CartagenaModelListener> allListeners;
-	/** The number of moves left in the current player's turn. */
 	private int movesLeftInTurn;
-
-	/** Tracks the set of pieces in the board of the current game */
 	private List<BoardPiece> board;
-
-	/** The cards in each player's hand currently */
 	private Map<Player, Collection<SpaceType>> cardHands;
-
-	/** The player whose turn it is */
 	private Player currentPlayer;
-
-	/** The winning player, set once the game is over */
 	private Player winner;
 
-	/** Starts a new game by randomly creating a new board and assigning hands. */
 	public CartagenaModelImpl() {
 		movesLeftInTurn = 3;
 		board = createNewBoard();
@@ -62,12 +43,6 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	}
 
-	/**
-	 * Draws STARTING_HAND_SIZE cards randomly for each player. Every SpaceType
-	 * has an equal probability of being drawn.
-	 * 
-	 * @return A map between each player and their hand
-	 */
 	private Map<Player, Collection<SpaceType>> assignStartingHands() {
 
 		allListeners = new LinkedList<CartagenaModelListener>();
@@ -76,7 +51,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 		Random rand = new Random();
 		for (Player currentPlayer : Player.values()) {
 			Collection<SpaceType> playerCards = new ArrayList<SpaceType>();
-			for (int i = 0; i < STARTING_HAND_SIZE; i++) {
+			for (int i = 0; i < MAX_CARDS_PER_PLAYER; i++) {
 				int currentCard = rand.nextInt(possibleValues.length);
 				playerCards.add(possibleValues[currentCard]);
 			}
@@ -86,12 +61,6 @@ public class CartagenaModelImpl implements CartagenaModel {
 		return startHands;
 	}
 
-	/**
-	 * Creates a new board with a random permuatation of the spacetypes in each
-	 * of the segments.
-	 * 
-	 * @return a list of all the BoardPieces
-	 */
 	private List<BoardPiece> createNewBoard() {
 		List<BoardPiece> newBoard = new ArrayList<BoardPiece>();
 		Collection<Player> playerPieces = new ArrayList<Player>();
@@ -103,7 +72,7 @@ public class CartagenaModelImpl implements CartagenaModel {
 			// that to the first BoardPiece
 		}
 		for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
-
+			
 			playerPieces.add(Player.PLAYER_2);
 
 			// create collection with six pieces for each player in it, then add
@@ -123,8 +92,8 @@ public class CartagenaModelImpl implements CartagenaModel {
 				Collections.shuffle(allTypes);
 			}
 
-			BoardPiece current = new BoardPiece(new Location(i),
-					allTypes.get((i - 1) % NUM_LOCATIONS_PER_SEGMENT));
+			BoardPiece current = new BoardPiece(new Location(i), allTypes
+					.get((i - 1) % NUM_LOCATIONS_PER_SEGMENT));
 
 			newBoard.add(current);
 		}
@@ -133,17 +102,11 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void addListener(CartagenaModelListener listener) {
 		allListeners.add(listener);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void endTurnEarly() {
 		switchTurn();
@@ -151,102 +114,73 @@ public class CartagenaModelImpl implements CartagenaModel {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Collection<SpaceType> getCards(Player player) {
 		return Collections.unmodifiableCollection(cardHands.get(player));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Player getCurrentPlayer() {
 		return currentPlayer;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Collection<Player> getPieces(Location location) {
 		BoardPiece current = board.get(location.getSpaceNumber());
 		return Collections.unmodifiableCollection(current.getCurrentPieces());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public SpaceType getSpaceType(Location location) {
 		BoardPiece current = board.get(location.getSpaceNumber());
 		return current.getSpaceType();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int getTurnMovesLeft() {
 		return movesLeftInTurn;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Player getWinner() {
 		return winner;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void movePieceBackward(Location from, Location to) {
-		if (from.getSpaceNumber() < to.getSpaceNumber()) {
+		BoardPiece start = board.get(from.getSpaceNumber());
+		BoardPiece end = board.get(to.getSpaceNumber());
+		if (to.getSpaceNumber() == Location.INITIAL_LOCATION_SPACE_NUMBER) {
+			// cannot move back to start spot
 			publishIllegalEvent(new CartagenaIllegalMoveEvent(
-					"Cannot move a piece backwards to a spot farther along the board."));
-		} else {
-			BoardPiece start = board.get(from.getSpaceNumber());
-			BoardPiece end = board.get(to.getSpaceNumber());
-			if (to.getSpaceNumber() == Location.INITIAL_LOCATION_SPACE_NUMBER) {
-				// cannot move back to start spot
-				publishIllegalEvent(new CartagenaIllegalMoveEvent(
-						"Cannot move backwards to initial position"));
-			} else if (start.getCurrentPieces().contains(currentPlayer)) {
-				if (end.getCurrentPieces().size() == 1
-						|| end.getCurrentPieces().size() == 2) {
-					drawCards(end.getCurrentPieces().size());
-					start.getCurrentPieces().remove(currentPlayer);
-					end.getCurrentPieces().add(currentPlayer);
-					boolean turnOver = false;
-					if (--movesLeftInTurn == 0) {
-						turnOver = true;
-						switchTurn();
+					"Cannot move backwards to initial position"));
+		} else if (start.getCurrentPieces().contains(currentPlayer)) {
+			if (end.getCurrentPieces().size() == 1
+					|| end.getCurrentPieces().size() == 2) {
+				drawCards(end.getCurrentPieces().size());
+				start.getCurrentPieces().remove(currentPlayer);
+				end.getCurrentPieces().add(currentPlayer);
+				boolean turnOver = false;
+				if (--movesLeftInTurn == 0) {
+					turnOver = true;
+					switchTurn();
 
-					}
-
-					// The game cannot be over if the player has moved backwards
-					publishEvent(new CartagenaMoveEvent(turnOver, false));
-				} else {
-					String message = "Cannot move backwards to a spot with "
-							+ end.getCurrentPieces().size() + " pieces on it";
-					publishIllegalEvent(new CartagenaIllegalMoveEvent(message));
 				}
+
+				// The game cannot be over if the player has moved backwards
+				publishEvent(new CartagenaMoveEvent(turnOver, false));
 			} else {
-				String message = "You don't have any pieces on that spot";
+				String message = "Cannot move backwards to a spot with "
+						+ end.getCurrentPieces().size() + " pieces on it";
 				publishIllegalEvent(new CartagenaIllegalMoveEvent(message));
 			}
+		} else {
+			String message = "You don't have any pieces on that spot";
+			publishIllegalEvent(new CartagenaIllegalMoveEvent(message));
 		}
 
 	}
 
-	/**
-	 * Ends the current player's turn
-	 */
 	private void switchTurn() {
 		if (currentPlayer == Player.PLAYER_1)
 			currentPlayer = Player.PLAYER_2;
@@ -256,32 +190,18 @@ public class CartagenaModelImpl implements CartagenaModel {
 		movesLeftInTurn = 3;
 	}
 
-	/**
-	 * Randomly draws cards and places them in the hand of the current player
-	 * 
-	 * @param numCards
-	 *            The number of cards to draw.
-	 */
 	private void drawCards(int numCards) {
 		for (int i = 0; i < numCards; i++) {
-			// It appears that you can have as big a hand as you want
-			// if (cardHands.get(currentPlayer).size() < STARTING_HAND_SIZE) {
-			Random rand = new Random();
-			SpaceType[] types = SpaceType.values();
-			SpaceType addType = types[rand.nextInt(types.length)];
-			cardHands.get(currentPlayer).add(addType);
-			/*
-			 * } else break;
-			 */
+			if (cardHands.get(currentPlayer).size() < MAX_CARDS_PER_PLAYER) {
+				Random rand = new Random();
+				SpaceType[] types = SpaceType.values();
+				SpaceType addType = types[rand.nextInt(types.length)];
+				cardHands.get(currentPlayer).add(addType);
+			} else
+				break;
 		}
 	}
 
-	/**
-	 * Decides whether either player has gotten all of their pieces off the
-	 * board.
-	 * 
-	 * @return true if the game is over, false otherwise
-	 */
 	private boolean determineGameOver() {
 		boolean player1Victory = true;
 		boolean player2Victory = true;
@@ -310,24 +230,12 @@ public class CartagenaModelImpl implements CartagenaModel {
 		}
 	}
 
-	/**
-	 * Publishes the attempted illegal move to all of the model's listeners.
-	 * 
-	 * @param move
-	 *            the illegal event being published
-	 */
 	private void publishIllegalEvent(CartagenaIllegalMoveEvent move) {
 		for (CartagenaModelListener listener : allListeners) {
 			listener.illegalMoveRejected(move);
 		}
 	}
 
-	/**
-	 * Publishes the event to all of the model's listeners.
-	 * 
-	 * @param move
-	 *            the event being published
-	 */
 	private void publishEvent(CartagenaMoveEvent move) {
 		for (CartagenaModelListener listener : allListeners) {
 			listener.moveMade(move);
@@ -335,9 +243,6 @@ public class CartagenaModelImpl implements CartagenaModel {
 	}
 
 	@Override
-	/**
-	 * {@inheritDoc}
-	 */
 	public void movePieceForward(Location location, SpaceType card) {
 		Collection<SpaceType> oldHand = cardHands.remove(currentPlayer);
 		if (oldHand.contains(card)) {
