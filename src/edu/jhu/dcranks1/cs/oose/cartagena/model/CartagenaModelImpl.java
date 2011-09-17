@@ -1,17 +1,8 @@
-/*
 
 
-The game is played on a board with thirty-eight consecutive spaces: a start, an end, and thirty-six intermediate spaces.
-Each intermediate space has one of six types. The thirty-six intermediate spaces are divided into six space segments, each of which must contain one space of each type.
-Each player starts with six pieces on the start space and six cards.
-Players alternate turns. Each turn consists of up to three moves.
-Each move may either involve playing a card to move a piece forward or moving a piece backward to draw more cards.
-Pieces may never leave the end space once they reach it. Pieces may not return to the start space once they leave it.
-The first player to reach the end space with all of his or her pieces is the winner; explicit feedback for this event is required.
 
- */
 
-package edu.jhu.dcranks1.cs.oose.cartagena;
+package edu.jhu.dcranks1.cs.oose.cartagena.model;
 
 import java.util.ArrayList;
 import java.util.Collection;

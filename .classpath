@@ -7,6 +7,5 @@
 			<attribute name="javadoc_location" value="file:/home/crank/git/Cartagena/CartagenaFramework/doc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/crank/git/Cartagena/CartagenaFramework/StandardCartagenaUI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

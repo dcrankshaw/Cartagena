@@ -1,4 +1,4 @@
-package edu.jhu.dcranks1.cs.oose.cartagena;
+package edu.jhu.dcranks1.cs.oose.cartagena.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
