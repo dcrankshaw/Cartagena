@@ -2,10 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/crank/git/Cartagena/CartagenaFramework/CartagenaInterface.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/home/crank/git/Cartagena/CartagenaFramework/doc/"/>
-		</attributes>
-	</classpathentry>
+
+	<classpathentry kind="lib" path="CartagenaFramework/CartagenaInterface.jar"/>
+	<classpathentry kind="lib" path="CartagenaFramework/StandardCartagenaUI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
