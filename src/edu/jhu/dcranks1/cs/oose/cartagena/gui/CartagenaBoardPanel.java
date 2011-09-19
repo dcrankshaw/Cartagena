@@ -24,9 +24,10 @@ import edu.jhu.cs.oose.fall2011.cartagena.iface.SpaceType;
 public class CartagenaBoardPanel extends JPanel {
 
 	private CartagenaModel model;
-	private static final int BOARD_WIDTH = 300;
-	private static final int BOARD_HEIGHT = 400;
-	private static final String basePath = "/home/crank/git/Cartagena/images/drwhovillain";
+	private static final int BOARD_WIDTH = 800;
+	private static final int BOARD_HEIGHT = 800;
+	//private static final String basePath = "/home/crank/git/Cartagena/images/drwhovillain";
+	private static final String basePath = "/Users/Daniel/cartagena_secondtry/images/drwhovillain";
 	private static final String fileEnding = ".jpg";
 	private Map<SpaceType, Image> boardPictures;
 	private static final int NUM_COLUMNS = 6;
@@ -74,7 +75,7 @@ public class CartagenaBoardPanel extends JPanel {
 	}
 
 	public void paint(Graphics g) {
-		g.setColor(Color.RED.darker());
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		int cellWidth = getWidth() / NUM_COLUMNS;
 		int cellHeight = getHeight() / NUM_ROWS;
@@ -83,6 +84,12 @@ public class CartagenaBoardPanel extends JPanel {
 			
 			for(int y = 1; y < NUM_ROWS; y++)
 			{
+				//TODO: set alternating colors here
+				if((x+y)%2 == 0)
+					g.setColor(Color.BLUE.brighter().brighter());
+				else
+					g.setColor(Color.BLACK);
+				
 				PathPosition entrance = PathPosition.NORTH;
 				PathPosition exit = PathPosition.SOUTH;
 				if( (y + 1) == NUM_ROWS)
@@ -120,8 +127,38 @@ public class CartagenaBoardPanel extends JPanel {
 		Image scaledPic = boardPictures.get(type).getScaledInstance(picWidth, picHeight,
 				Image.SCALE_DEFAULT);
 
-		g.drawImage(scaledPic, xTopLeft + borderWidth, yTopLeft + borderHeight, null);
-
+		//g.drawImage(scaledPic, xTopLeft + borderWidth, yTopLeft + borderHeight, null);
+		/*switch(type)
+		{
+		case BLUE: {
+			g.setColor(Color.BLUE);
+			break;
+		}
+		case GREEN: {
+			g.setColor(Color.GREEN);
+			break;
+		}
+		case ORANGE: {
+			g.setColor(Color.ORANGE);
+			break;
+		}
+		case PURPLE: {
+			g.setColor(Color.MAGENTA);
+			break;
+		}
+		case RED: {
+			g.setColor(Color.RED);
+			break;
+		}
+		case YELLOW: {
+			g.setColor(Color.YELLOW);
+			break;
+		}
+		}*/
+		
+		
+		g.fillRect(xTopLeft + borderWidth, yTopLeft + borderHeight, picWidth, picHeight);
+		
 		drawPath(g, xTopLeft, yTopLeft, width, height, pathEntrance);
 		drawPath(g, xTopLeft, yTopLeft, width, height, pathExit);
 
