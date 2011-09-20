@@ -18,10 +18,12 @@ public class CartagenaCardsPanel extends JPanel
 	private static final int BOARD_WIDTH = 300;
 	private static final int BOARD_HEIGHT = 70;
 	private Player myPlayer;
+	private CartagenaMovePreparationModel movePrepModel;
 	
-	public CartagenaCardsPanel(CartagenaModel _model, Player p)
+	public CartagenaCardsPanel(CartagenaModel cartagenaModel, Player p, CartagenaMovePreparationModel movePrep)
 	{
-		this.model = _model;
+		this.model = cartagenaModel;
+		this.movePrepModel = movePrep;
 		this.myPlayer = p;
 		
 		this.addMouseListener(new MouseAdapter()
@@ -43,8 +45,13 @@ public class CartagenaCardsPanel extends JPanel
 	
 	public void paint(Graphics g)
 	{
-		g.setColor(Color.BLUE.darker());
+		g.setColor(Color.BLACK);
 		g.fillRect(0,0,getWidth(), getHeight());
 		
+	}
+	
+	public void setCartagenaModel(CartagenaModel cartagenaModel)
+	{
+		this.model = cartagenaModel;
 	}
 }

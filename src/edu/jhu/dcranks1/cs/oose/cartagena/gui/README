@@ -20,3 +20,9 @@ getResourceAsStream
 
 determine which dimension is shrinking more, force other dimension to shrink extra to compensate and preserve aspect ratio,
 center that image in the space allocated to it (hopefully it has a transparent background), that should hopefully work
+
+
+
+CartagenaModelFactory
+	for New Game
+

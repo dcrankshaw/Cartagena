@@ -11,10 +11,10 @@ public class CartagenaMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CartagenaModel model = new CartagenaModelImpl();
+		CartagenaModelFactory modelFactory = new CartagenaModelFactory();
 		try
 		{
-		CartagenaFrame frame = new CartagenaFrame(model);
+		CartagenaFrame frame = new CartagenaFrame(modelFactory);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
