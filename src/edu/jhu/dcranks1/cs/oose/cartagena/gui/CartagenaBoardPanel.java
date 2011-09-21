@@ -47,7 +47,7 @@ public class CartagenaBoardPanel extends JPanel {
 	private static final int NUM_SPOTS_PER_COLUMN = 6;
 	private static final int NUM_SPOTS_PER_ROW = 6;
 	private static final int MAX_PIECES_PER_ROW = 4;
-	private static final int MAX_ROWS_PER_SPOT = 3;
+	private static final int MAX_ROWS_PER_SPOT = 6;
 	private static final String backgroundFileName = "background2.png";
 	private static final String tardisFileName = "tardis.png";
 	private BufferedImage tardisPicture;
@@ -119,14 +119,8 @@ public class CartagenaBoardPanel extends JPanel {
 				Point p = e.getPoint();
 				final int cx = (int) ((double) p.getX() / (double) getWidth() * NUM_COLUMNS);
 				final int cy = (int) ((double) p.getY() / (double) getHeight() * NUM_ROWS);
-
-				/*
-				 * System.out.println("Pixel clicked: (" + p.getX() + "," +
-				 * p.getY() + ")\tCalculated point: (" + cx + "," + cy + ")");
-				 * System.out.println("Cell Dimensions: (" + ((double)
-				 * getWidth()) / NUM_COLUMNS + "," + ((double) getHeight()) /
-				 * NUM_ROWS + ")");
-				 */
+				
+				 
 				// means user clicked in the rightmost column below the initial
 				// square
 				if (cx == NUM_ROWS && cy != 0) {
@@ -285,9 +279,9 @@ public class CartagenaBoardPanel extends JPanel {
 					.getPieces(new Location(spaceNumber)), Player.PLAYER_1);
 			int numPlayer2Pieces = Collections.frequency(model
 					.getPieces(new Location(spaceNumber)), Player.PLAYER_2);
-
-			/*drawGamePiece(g, xTopLeft, yTopLeft, width, height,
-					numPlayer1Pieces, numPlayer2Pieces, spaceNumber);*/
+			
+			drawGamePiece(g, xTopLeft, yTopLeft, width, height,
+					numPlayer1Pieces, numPlayer2Pieces, spaceNumber);
 		} else {
 			int numPlayer1PiecesOnBoard = 0;
 			int numPlayer2PiecesOnBoard = 0;
@@ -313,10 +307,12 @@ public class CartagenaBoardPanel extends JPanel {
 	private void drawGamePiece(Graphics g, int xTopLeft, int yTopLeft,
 			int width, int height, int numPlayer1Pieces, int numPlayer2Pieces,
 			int spotNumber) {
+		
 		int picWidth = (int) (width * pictureCellPercentage);
 		int picHeight = (int) (height * pictureCellPercentage);
 		int borderWidth = (width - picWidth) / 2;
 		int borderHeight = (height - picHeight) / 2;
+		
 
 		float pieceSpacingPercent = 0.1f;
 
@@ -326,42 +322,75 @@ public class CartagenaBoardPanel extends JPanel {
 		int pieceNumber = 1;
 
 		int x = xTopLeft + borderWidth;
-		int y = yTopLeft + borderHeight;
+		int y = yTopLeft + borderHeight - pieceHeight; //subtract pieceHeight because y will get incremented the first time through the for loop
+		double radiusPercentage = 0.5;
+		double borderExtra = 0.1;
+		
+		
+		
+		
+		
+		int radiusWidth = (int) (pieceWidth*radiusPercentage);
+		int radiusHeight = (int) (pieceHeight*radiusPercentage);
+		int pieceBorderWidth = (int) (radiusWidth*(1+borderExtra));
+		int pieceBorderHeight = (int) (radiusHeight * (1+borderExtra));
+		
+		
 		Player player = Player.PLAYER_1;
 		for (int i = 0; i < numPlayer1Pieces; i++) {
-			if ((pieceNumber % (MAX_PIECES_PER_ROW + 1)) == 0) {
+			if (((pieceNumber - 1) % (MAX_PIECES_PER_ROW)) == 0) {
 				y += pieceHeight;
 			}
 
-			g.setColor(Color.RED);
+			
 			// draw shape
 			// set color to black
 			// draw same shape but 90% of the size, inside, this will give
 			// me a border
+			
 			int xPiece = (x + ((pieceNumber - 1) % MAX_PIECES_PER_ROW)
 					* pieceWidth);
+			
+			int cx = xPiece + pieceWidth / 2;
+			int cy = y + pieceHeight / 2;
+			
+			//g.setColor(Color.BLUE);
+			//g.fillOval(cx, cy, pieceBorderWidth, pieceBorderHeight);
+			//g.fillOval(cx, cy, pieceBorderWidth, pieceBorderWidth);
+			
+			g.setColor(Color.RED);
+			g.fillOval(cx, cy, radiusWidth, radiusWidth);
+			
+			/*;
 			g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent / 2), y
 					+ (int) (pieceHeight * pieceSpacingPercent / 2),
-					pieceWidth, pieceHeight);
+					pieceWidth, pieceHeight);*/
 
 			pieceNumber++;
 		}
 		player = Player.PLAYER_2;
 		for (int i = 0; i < numPlayer2Pieces; i++) {
-			if ((pieceNumber % (MAX_PIECES_PER_ROW + 1)) == 0) {
+			if (((pieceNumber - 1) % (MAX_PIECES_PER_ROW)) == 0) {
 				y += pieceHeight;
 			}
 
-			g.setColor(Color.GREEN);
-			// draw shape
-			// set color to black
-			// draw same shape but 90% of the size, inside, this will give
-			// me a border
 			int xPiece = (x + ((pieceNumber - 1) % MAX_PIECES_PER_ROW)
 					* pieceWidth);
-			g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent / 2), y
-					+ (int) (pieceHeight * pieceSpacingPercent / 2),
-					pieceWidth, pieceHeight);
+			
+			int cx = xPiece + pieceWidth / 2;
+			int cy = y + pieceHeight / 2;
+			
+			//g.setColor(Color.BLUE);
+			//g.fillOval(cx, cy, pieceBorderWidth, pieceBorderWidth);
+			
+			g.setColor(Color.GREEN);
+			g.fillOval(cx, cy, radiusWidth, radiusWidth);
+			
+			
+			
+			//g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent / 2), y
+				//	+ (int) (pieceHeight * pieceSpacingPercent / 2),
+				//	pieceWidth, pieceHeight);
 
 			pieceNumber++;
 		}

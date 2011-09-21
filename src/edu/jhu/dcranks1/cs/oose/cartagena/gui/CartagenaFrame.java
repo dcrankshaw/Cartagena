@@ -74,6 +74,7 @@ public class CartagenaFrame extends JFrame {
 				//TODO something needs to happen when the turn ends
 				else
 				{
+					CartagenaFrame.this.movePrepModel.resetModel();
 					repaint();
 				}
 			}
@@ -81,6 +82,8 @@ public class CartagenaFrame extends JFrame {
 			@Override
 			public void illegalMoveRejected(CartagenaIllegalMoveEvent event) {
 				CartagenaFrame.this.gameStatusLabel.setText(event.getDescription());
+				CartagenaFrame.this.movePrepModel.resetModel();
+				repaint();
 
 			}
 		});
@@ -136,6 +139,7 @@ public class CartagenaFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					CartagenaFrame.this.model.endTurnEarly();
+					repaint();
 				}
 			});
 			

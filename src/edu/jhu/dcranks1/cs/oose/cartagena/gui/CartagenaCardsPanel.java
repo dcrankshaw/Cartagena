@@ -37,6 +37,7 @@ public class CartagenaCardsPanel extends JPanel
 	private static int INITIAL_HAND_SIZE = 6;
 	private static float CARD_BORDER_PERCENTAGE = 0.1f;
 	private Map<SpaceType, Integer> myCards;
+	
 	SpaceType[] typeOrder;
 	private Color myColor;
 	
@@ -105,17 +106,23 @@ public class CartagenaCardsPanel extends JPanel
 				Point p = e.getPoint();
 				int numCards = CartagenaCardsPanel.this.model.getCards(myPlayer).size();
 				updateCards();
-				int spot = ((int) ((double) e.getY()) / numCards * getHeight());
+				int spot = (int) (((double) e.getY()) / ((double) getHeight()) * numCards);
+				System.out.println("Card selected: " + spot);
 				int index = 0;
 				int cardNumber = 0;
 				SpaceType selectedCardType = typeOrder[0];
-				while(cardNumber < spot)
+				
+				
+				while(cardNumber <= spot)
 				{
-					//TODO getting array out of bounds
 					selectedCardType = typeOrder[index];
-					cardNumber += myCards.get(typeOrder[index++]);
+					cardNumber += myCards.get(typeOrder[index]);
+					index++;
 				}
-				CartagenaCardsPanel.this.movePrepModel.selectCard(selectedCardType);
+				if(CartagenaCardsPanel.this.model.getCurrentPlayer().equals(myPlayer))
+				{
+					CartagenaCardsPanel.this.movePrepModel.selectCard(selectedCardType);
+				}
 			}
 				
 		});
@@ -162,7 +169,7 @@ public class CartagenaCardsPanel extends JPanel
 		}
 		else
 		{
-			g.setColor(myColor.darker().darker());
+			g.setColor(myColor.darker().darker().darker().darker());
 		}
 		
 		

@@ -1,16 +1,14 @@
-Menubar
-
-Gamepieces
 
 path
-
-start, end spots
 
 put everything together
 
 debug
 
+PATH!!!!!
 
-make sure i am repainting every time it is necessary
+for some reason I have cards disappear even when a piece doesn't move
+
+For end of game, can I superimpose a JButton over my custom board component asking if the player wants to play again?
 
 make sure i don't allow the player whose turn it ISN'T to do anything

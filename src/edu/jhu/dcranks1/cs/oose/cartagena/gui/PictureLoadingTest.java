@@ -10,23 +10,40 @@ public class PictureLoadingTest {
 	
 	public static void main(String[] args)
 	{
-		for(int spaceNumber = 0; spaceNumber  < 36; spaceNumber++)
+		
+		int x = 0;
+		int y = -1;
+		int pieceNumber = 1;
+		int MAX_PIECES_PER_ROW = 4;
+		
+		for(int i = 0; i < 6; i++)
 		{
-			int y = (spaceNumber) / NUM_SPOTS_PER_ROW;
-			int x = 0;
-			if(y % 2 == 0)
+			if(((pieceNumber-1) % (MAX_PIECES_PER_ROW)) == 0)
 			{
-				x = (NUM_SPOTS_PER_ROW - (spaceNumber % NUM_SPOTS_PER_ROW)) - 1;
-			}
-			else
-			{
-				x = (spaceNumber) % NUM_SPOTS_PER_ROW;
+				y++;
 			}
 			
-			System.out.println("S: " + (spaceNumber + 1) + "\tx: " + x + "\ty: " + y + "\t\tCalcS: " + calcSpace(x, y));
-			
-			
+			int xP = x + ((pieceNumber - 1) % MAX_PIECES_PER_ROW);
+			System.out.println("(" + xP + ", " + y + ")");
+			pieceNumber++;
 		}
+		
+		System.out.println("\nBREAK\n");
+		
+		for(int i = 0; i < 6; i++)
+		{
+			if(((pieceNumber - 1) % (MAX_PIECES_PER_ROW)) == 0)
+			{
+				y++;
+			}
+			
+			int xP = x + ((pieceNumber - 1) % MAX_PIECES_PER_ROW);
+			System.out.println("(" + xP + ", " + y + ")");
+			pieceNumber ++;
+		}
+		
+		
+		
 	}
 	
 	public static int calcSpace(int x, int y)

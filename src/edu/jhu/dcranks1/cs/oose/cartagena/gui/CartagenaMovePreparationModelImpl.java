@@ -117,6 +117,7 @@ public class CartagenaMovePreparationModelImpl implements CartagenaMovePreparati
 		start = null;
 		end = null;
 		card = null;
+		notifySpotSelected(null);
 		//listeners = new ArrayList<CartagenaMovePreparationModelListener>();
 		
 	}
