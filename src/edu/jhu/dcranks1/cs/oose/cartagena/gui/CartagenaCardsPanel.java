@@ -38,6 +38,7 @@ public class CartagenaCardsPanel extends JPanel
 	private static float CARD_BORDER_PERCENTAGE = 0.1f;
 	private Map<SpaceType, Integer> myCards;
 	SpaceType[] typeOrder;
+	private Color myColor;
 	
 	public CartagenaCardsPanel(CartagenaModel cartagenaModel, Player player, CartagenaMovePreparationModel movePrep) throws CartagenaGuiException
 	{
@@ -48,6 +49,14 @@ public class CartagenaCardsPanel extends JPanel
 		cardPictures = new HashMap<SpaceType, BufferedImage>();
 		typeOrder = SpaceType.values();
 		updateCards();
+		if(myPlayer.equals(Player.PLAYER_1))
+		{
+			myColor = Color.RED;
+		}
+		else
+		{
+			myColor = Color.GREEN;
+		}
 		
 		/*This is a little hacky, but I couldn't find any specification saying that an enum
 		* is always iterated over in the same order. I would assume that would be the case,
@@ -66,13 +75,11 @@ public class CartagenaCardsPanel extends JPanel
 				cardPictures.put(current, img);
 				pictureNumber++;
 			} catch (Exception e) {
-				System.out.println("PIC LOADING ERROR");
+				
 				throw new CartagenaGuiException("Error reading image files");
 				
 			}
 		}
-		
-		System.out.println("LOADED PICS");
 		
 		model.addListener(new CartagenaModelListener() {
 			
@@ -98,12 +105,13 @@ public class CartagenaCardsPanel extends JPanel
 				Point p = e.getPoint();
 				int numCards = CartagenaCardsPanel.this.model.getCards(myPlayer).size();
 				updateCards();
-				int spot = ((int) ((double) e.getX()) / numCards * getWidth());
+				int spot = ((int) ((double) e.getY()) / numCards * getHeight());
 				int index = 0;
 				int cardNumber = 0;
 				SpaceType selectedCardType = typeOrder[0];
 				while(cardNumber < spot)
 				{
+					//TODO getting array out of bounds
 					selectedCardType = typeOrder[index];
 					cardNumber += myCards.get(typeOrder[index++]);
 				}
@@ -148,14 +156,29 @@ public class CartagenaCardsPanel extends JPanel
 	private void paintCard(int numCards, SpaceType type, int yTopLeft, int cardHeight, Graphics g)
 	{
 		Image scaledPicture = CartagenaBoardPanel.scalePicture(cardPictures.get(type), getWidth(), (int) (cardHeight*(1-CARD_BORDER_PERCENTAGE)));
+		if(model.getCurrentPlayer().equals(myPlayer))
+		{
+			g.setColor(myColor);
+		}
+		else
+		{
+			g.setColor(myColor.darker().darker());
+		}
+		
+		
 		
 		for(int i = 0; i < numCards; i++)
 		{
-			g.setColor(Color.BLUE);
+			
 			int yStart = yTopLeft + cardHeight*i + ((int) (cardHeight*CARD_BORDER_PERCENTAGE))/2;
 			g.fillRect(0, yStart, getWidth(), (int) (cardHeight*(1-CARD_BORDER_PERCENTAGE)));
 			
-			g.drawImage(scaledPicture, 0, yStart, scaledPicture.getWidth(arg0), height, observer)
+			int picWidth = scaledPicture.getWidth(null);
+			int picHeight = scaledPicture.getHeight(null);
+			int actualBorderWidth = (getWidth() - picWidth) / 2;
+			int actualBorderHeight = (cardHeight - picHeight) / 2;
+			
+			g.drawImage(scaledPicture, 0 + actualBorderWidth, yTopLeft + cardHeight*i + actualBorderHeight, scaledPicture.getWidth(null), scaledPicture.getHeight(null), null);
 		}
 		
 	}

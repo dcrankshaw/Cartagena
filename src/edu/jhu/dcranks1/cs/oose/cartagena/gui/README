@@ -1,28 +1,16 @@
-README:
+Menubar
+
+Gamepieces
+
+path
+
+start, end spots
+
+put everything together
+
+debug
 
 
-Dr. Who Edition to use:
+make sure i am repainting every time it is necessary
 
-Daleks
-Cybermen
-Davros
-Angels
-Master
-The beast
-
-/CartagenaCrankshaw/images/dalek.jpg
-
-
-
-
-getResourceAsStream
-
-
-determine which dimension is shrinking more, force other dimension to shrink extra to compensate and preserve aspect ratio,
-center that image in the space allocated to it (hopefully it has a transparent background), that should hopefully work
-
-
-
-CartagenaModelFactory
-	for New Game
-
+make sure i don't allow the player whose turn it ISN'T to do anything
