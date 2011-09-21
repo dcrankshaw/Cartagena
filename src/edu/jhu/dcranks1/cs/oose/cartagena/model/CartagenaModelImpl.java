@@ -64,13 +64,22 @@ public class CartagenaModelImpl implements CartagenaModel {
 	private List<BoardPiece> createNewBoard() {
 		List<BoardPiece> newBoard = new ArrayList<BoardPiece>();
 		Collection<Player> playerPieces = new ArrayList<Player>();
+		Collection<Player> playerPiecesEnd = new ArrayList<Player>();
 
-		for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
+		/*for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
 
 			playerPieces.add(Player.PLAYER_1);
 			// create collection with six pieces for each player in it, then add
 			// that to the first BoardPiece
+		}*/
+		
+		for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
+
+			playerPiecesEnd.add(Player.PLAYER_1);
+			// create collection with six pieces for each player in it, then add
+			// that to the first BoardPiece
 		}
+		
 		for (int j = 0; j < NUM_PIECES_PER_PLAYER; j++) {
 			
 			playerPieces.add(Player.PLAYER_2);
@@ -95,6 +104,11 @@ public class CartagenaModelImpl implements CartagenaModel {
 			BoardPiece current = new BoardPiece(new Location(i), allTypes
 					.get((i - 1) % NUM_LOCATIONS_PER_SEGMENT));
 
+			//TODO
+			if(i == Location.MAXIMUM_SPACE_NUMBER)
+			{
+				current.setCurrentPieces(playerPiecesEnd);
+			}
 			newBoard.add(current);
 		}
 

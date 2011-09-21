@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -68,7 +69,22 @@ public class CartagenaFrame extends JFrame {
 			public void moveMade(CartagenaMoveEvent event) {
 				if(event.isGameEnded())
 				{
-					//TODO something for game over
+					String question = new String("Congratulations " + CartagenaFrame.this.model.getWinner().toString() + "!  You won!\n\nWould you like to play another game?");
+					
+					//repaint();
+					
+					//TODO change icon
+					int n = JOptionPane.showConfirmDialog(CartagenaFrame.this, question, "New Game", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+					if(n == JOptionPane.YES_OPTION)
+					{
+						CartagenaFrame.this.model = CartagenaFrame.this.modelFactory.createModel();
+						CartagenaFrame.this.boardPanel.setCartagenaModel(CartagenaFrame.this.model);
+						CartagenaFrame.this.player1CardPanel.setCartagenaModel(CartagenaFrame.this.model);
+						CartagenaFrame.this.player2CardPanel.setCartagenaModel(CartagenaFrame.this.model);
+						CartagenaFrame.this.movePrepModel.resetModel();
+						repaint();
+					}
+							
 				}
 				
 				//TODO something needs to happen when the turn ends
