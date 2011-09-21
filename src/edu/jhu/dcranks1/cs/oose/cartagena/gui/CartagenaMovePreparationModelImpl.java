@@ -81,7 +81,12 @@ public class CartagenaMovePreparationModelImpl implements CartagenaMovePreparati
 	{
 		for(CartagenaMovePreparationModelListener l: listeners)
 		{
-			l.spotSelected(location.getSpaceNumber());
+			if(location != null)
+			{
+				l.spotSelected(location.getSpaceNumber());
+			}
+			else
+				l.spotSelected(-1);
 		}
 	}
 	
