@@ -37,8 +37,6 @@ public class CartagenaBoardPanel extends JPanel {
 	private static final int BOARD_WIDTH = 1050;
 	private static final int BOARD_HEIGHT = 900;
 	public static final float TRANSPARENCY_LEVEL = 0.7f;
-	// private static final String basePath =
-	// "/home/crank/git/Cartagena/images/drwhovillain";
 	private static final String fileEnding = "trans.png";
 	private static String path = "images/drwhovillain";
 	private Map<SpaceType, BufferedImage> boardPictures;
@@ -119,8 +117,7 @@ public class CartagenaBoardPanel extends JPanel {
 				Point p = e.getPoint();
 				final int cx = (int) ((double) p.getX() / (double) getWidth() * NUM_COLUMNS);
 				final int cy = (int) ((double) p.getY() / (double) getHeight() * NUM_ROWS);
-				
-				 
+
 				// means user clicked in the rightmost column below the initial
 				// square
 				if (cx == NUM_ROWS && cy != 0) {
@@ -171,6 +168,8 @@ public class CartagenaBoardPanel extends JPanel {
 		int cellWidth = getWidth() / NUM_COLUMNS;
 		int cellHeight = getHeight() / NUM_ROWS;
 
+		drawEntirePath(g, cellWidth, cellHeight);
+
 		// draw start spot
 
 		drawBoardPiece(g, NUM_SPOTS_PER_ROW * cellWidth, 0, cellWidth,
@@ -180,8 +179,9 @@ public class CartagenaBoardPanel extends JPanel {
 
 		// draw end spot
 
-		drawBoardPiece(g, NUM_SPOTS_PER_ROW * cellWidth, (NUM_ROWS - 1) * cellHeight,
-				cellWidth, cellHeight, null, null, PathPosition.WEST, false, -1);
+		drawBoardPiece(g, NUM_SPOTS_PER_ROW * cellWidth, (NUM_ROWS - 1)
+				* cellHeight, cellWidth, cellHeight, null, null,
+				PathPosition.WEST, false, -1);
 
 		for (int spaceNumber = Location.INITIAL_LOCATION_SPACE_NUMBER; spaceNumber < Location.MAXIMUM_SPACE_NUMBER; spaceNumber++) {
 			int y = spaceNumber / NUM_SPOTS_PER_ROW;
@@ -198,12 +198,59 @@ public class CartagenaBoardPanel extends JPanel {
 			// TODO path position logic
 
 			drawBoardPiece(g, x * cellWidth, y * cellHeight, cellWidth,
-					cellHeight, model
-							.getSpaceType(new Location(spaceNumber + 1)),
+					cellHeight,
+					model.getSpaceType(new Location(spaceNumber + 1)),
 					entrance, exit, selectedSpots[spaceNumber + 1],
 					spaceNumber + 1);
 
 		}
+	}
+
+	private void drawEntirePath(Graphics g, int cellWidth, int cellHeight)
+	{
+		int length = cellWidth*(NUM_COLUMNS - 2);
+		int height = cellHeight;
+		int horizontalPathHeight = (int) (cellHeight*PATH_WIDTH_PERCENTAGE);
+		int verticalPathWidth = (int) (cellWidth*PATH_WIDTH_PERCENTAGE);
+		g.setColor(Color.GRAY.darker());
+		
+		for(int pathNumber = 0; pathNumber < NUM_ROWS; pathNumber++)
+		{
+			
+			//draw path along row
+			if((pathNumber == 0) || (pathNumber + 1 == NUM_ROWS))
+			{
+				g.fillRect(cellWidth/2, 
+						cellHeight*pathNumber + (cellHeight/2 - horizontalPathHeight), length + cellWidth, horizontalPathHeight);
+			}
+			else
+			{
+				g.fillRect(cellWidth/2, 
+						cellHeight*pathNumber + (cellHeight/2 - horizontalPathHeight), length, horizontalPathHeight);
+			}
+			
+			if(pathNumber + 1 != NUM_ROWS)
+			{
+				//draw path along row
+				if((pathNumber % 2) == 0)
+				{
+					int yStart = pathNumber*cellHeight + cellHeight/2;
+					int xStart = cellWidth/2 - verticalPathWidth/2;
+					g.fillRect(xStart, yStart, verticalPathWidth, height);
+				}
+				else
+				{
+					int yStart = pathNumber*cellHeight + cellHeight/2;
+					int xStart = cellWidth/2 - verticalPathWidth/2 + cellWidth*(NUM_COLUMNS - 2);
+					g.fillRect(xStart, yStart, verticalPathWidth, height);
+				}
+			}
+			
+			
+		}
+		
+		
+		
 	}
 
 	public static Image scalePicture(BufferedImage original, int picWidth,
@@ -275,11 +322,13 @@ public class CartagenaBoardPanel extends JPanel {
 				+ actualBorderHeight, null);
 		// last space is indicated by spaceNumber == -1
 		if (spaceNumber >= 0) {
-			int numPlayer1Pieces = Collections.frequency(model
-					.getPieces(new Location(spaceNumber)), Player.PLAYER_1);
-			int numPlayer2Pieces = Collections.frequency(model
-					.getPieces(new Location(spaceNumber)), Player.PLAYER_2);
-			
+			int numPlayer1Pieces = Collections
+					.frequency(model.getPieces(new Location(spaceNumber)),
+							Player.PLAYER_1);
+			int numPlayer2Pieces = Collections
+					.frequency(model.getPieces(new Location(spaceNumber)),
+							Player.PLAYER_2);
+
 			drawGamePiece(g, xTopLeft, yTopLeft, width, height,
 					numPlayer1Pieces, numPlayer2Pieces, spaceNumber);
 		} else {
@@ -287,10 +336,10 @@ public class CartagenaBoardPanel extends JPanel {
 			int numPlayer2PiecesOnBoard = 0;
 
 			for (int i = Location.MINIMUM_SPACE_NUMBER; i <= Location.MAXIMUM_SPACE_NUMBER; i++) {
-				numPlayer1PiecesOnBoard += Collections.frequency(model
-						.getPieces(new Location(i)), Player.PLAYER_1);
-				numPlayer2PiecesOnBoard += Collections.frequency(model
-						.getPieces(new Location(i)), Player.PLAYER_2);
+				numPlayer1PiecesOnBoard += Collections.frequency(
+						model.getPieces(new Location(i)), Player.PLAYER_1);
+				numPlayer2PiecesOnBoard += Collections.frequency(
+						model.getPieces(new Location(i)), Player.PLAYER_2);
 			}
 
 			drawGamePiece(g, xTopLeft, yTopLeft, width, height,
@@ -298,21 +347,17 @@ public class CartagenaBoardPanel extends JPanel {
 					NUM_PIECES_PER_PLAYER - numPlayer2PiecesOnBoard,
 					spaceNumber);
 		}
-		// drawPath(g, xTopLeft, yTopLeft, width, height, pathEntrance);
-		// drawPath(g, xTopLeft, yTopLeft, width, height, pathExit);
-
 	}
 
 	// TODO add in game pieces
 	private void drawGamePiece(Graphics g, int xTopLeft, int yTopLeft,
 			int width, int height, int numPlayer1Pieces, int numPlayer2Pieces,
 			int spotNumber) {
-		
+
 		int picWidth = (int) (width * pictureCellPercentage);
 		int picHeight = (int) (height * pictureCellPercentage);
 		int borderWidth = (width - picWidth) / 2;
 		int borderHeight = (height - picHeight) / 2;
-		
 
 		float pieceSpacingPercent = 0.1f;
 
@@ -322,49 +367,48 @@ public class CartagenaBoardPanel extends JPanel {
 		int pieceNumber = 1;
 
 		int x = xTopLeft + borderWidth;
-		int y = yTopLeft + borderHeight - pieceHeight; //subtract pieceHeight because y will get incremented the first time through the for loop
+		int y = yTopLeft + borderHeight - pieceHeight; // subtract pieceHeight
+														// because y will get
+														// incremented the first
+														// time through the for
+														// loop
 		double radiusPercentage = 0.5;
 		double borderExtra = 0.1;
-		
-		
-		
-		
-		
-		int radiusWidth = (int) (pieceWidth*radiusPercentage);
-		int radiusHeight = (int) (pieceHeight*radiusPercentage);
-		int pieceBorderWidth = (int) (radiusWidth*(1+borderExtra));
-		int pieceBorderHeight = (int) (radiusHeight * (1+borderExtra));
-		
-		
+
+		int radiusWidth = (int) (pieceWidth * radiusPercentage);
+		int radiusHeight = (int) (pieceHeight * radiusPercentage);
+		int pieceBorderWidth = (int) (radiusWidth * (1 + borderExtra));
+		int pieceBorderHeight = (int) (radiusHeight * (1 + borderExtra));
+
 		Player player = Player.PLAYER_1;
 		for (int i = 0; i < numPlayer1Pieces; i++) {
 			if (((pieceNumber - 1) % (MAX_PIECES_PER_ROW)) == 0) {
 				y += pieceHeight;
 			}
 
-			
 			// draw shape
 			// set color to black
 			// draw same shape but 90% of the size, inside, this will give
 			// me a border
-			
+
 			int xPiece = (x + ((pieceNumber - 1) % MAX_PIECES_PER_ROW)
 					* pieceWidth);
-			
+
 			int cx = xPiece + pieceWidth / 2;
 			int cy = y + pieceHeight / 2;
-			
-			//g.setColor(Color.BLUE);
-			//g.fillOval(cx, cy, pieceBorderWidth, pieceBorderHeight);
-			//g.fillOval(cx, cy, pieceBorderWidth, pieceBorderWidth);
-			
+
+			// g.setColor(Color.BLUE);
+			// g.fillOval(cx, cy, pieceBorderWidth, pieceBorderHeight);
+			// g.fillOval(cx, cy, pieceBorderWidth, pieceBorderWidth);
+
 			g.setColor(Color.RED);
 			g.fillOval(cx, cy, radiusWidth, radiusWidth);
-			
-			/*;
-			g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent / 2), y
-					+ (int) (pieceHeight * pieceSpacingPercent / 2),
-					pieceWidth, pieceHeight);*/
+
+			/*
+			 * ; g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent /
+			 * 2), y + (int) (pieceHeight * pieceSpacingPercent / 2),
+			 * pieceWidth, pieceHeight);
+			 */
 
 			pieceNumber++;
 		}
@@ -376,27 +420,27 @@ public class CartagenaBoardPanel extends JPanel {
 
 			int xPiece = (x + ((pieceNumber - 1) % MAX_PIECES_PER_ROW)
 					* pieceWidth);
-			
+
 			int cx = xPiece + pieceWidth / 2;
 			int cy = y + pieceHeight / 2;
-			
-			//g.setColor(Color.BLUE);
-			//g.fillOval(cx, cy, pieceBorderWidth, pieceBorderWidth);
-			
+
+			// g.setColor(Color.BLUE);
+			// g.fillOval(cx, cy, pieceBorderWidth, pieceBorderWidth);
+
 			g.setColor(Color.GREEN);
 			g.fillOval(cx, cy, radiusWidth, radiusWidth);
-			
-			
-			
-			//g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent / 2), y
-				//	+ (int) (pieceHeight * pieceSpacingPercent / 2),
-				//	pieceWidth, pieceHeight);
+
+			// g.fillRect(xPiece + (int) (pieceWidth * pieceSpacingPercent / 2),
+			// y
+			// + (int) (pieceHeight * pieceSpacingPercent / 2),
+			// pieceWidth, pieceHeight);
 
 			pieceNumber++;
 		}
 
 	}
 
+	/*
 	private void drawPath(Graphics g, int xTopLeft, int yTopLeft, int width,
 			int height, PathPosition position) {
 		int picWidth = (int) (width * pictureCellPercentage);
@@ -432,7 +476,7 @@ public class CartagenaBoardPanel extends JPanel {
 		default: // don't paint anything
 
 		}
-	}
+	}*/
 
 	public void setCartagenaModel(CartagenaModel cartagenaModel) {
 		this.model = cartagenaModel;
