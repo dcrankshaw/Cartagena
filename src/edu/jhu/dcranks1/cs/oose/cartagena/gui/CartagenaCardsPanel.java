@@ -82,42 +82,35 @@ public class CartagenaCardsPanel extends JPanel
 			}
 		}
 		
-		model.addListener(new CartagenaModelListener() {
-			
-			@Override
-			public void moveMade(CartagenaMoveEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void illegalMoveRejected(CartagenaIllegalMoveEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
 		
 		this.addMouseListener(new MouseAdapter()
 		{
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				Point p = e.getPoint();
+			public void mouseClicked(MouseEvent event) {
 				int numCards = CartagenaCardsPanel.this.model.getCards(myPlayer).size();
 				updateCards();
-				int spot = (int) (((double) e.getY()) / ((double) getHeight()) * numCards);
+				int spot = (int) (((double) event.getY()) / ((double) getHeight()) * numCards);
 				System.out.println("Card selected: " + spot);
 				int index = 0;
 				int cardNumber = 0;
 				SpaceType selectedCardType = typeOrder[0];
+				if(numCards == 1)
+					System.out.println(numCards);
 				
-				
-				while(cardNumber <= spot)
+				try
+				{
+				while((cardNumber <= spot) && (index < typeOrder.length))
 				{
 					selectedCardType = typeOrder[index];
 					cardNumber += myCards.get(typeOrder[index]);
 					index++;
+				}
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getMessage());
+					
 				}
 				if(CartagenaCardsPanel.this.model.getCurrentPlayer().equals(myPlayer))
 				{
@@ -147,17 +140,19 @@ public class CartagenaCardsPanel extends JPanel
 		g.setColor(Color.BLACK);
 		g.fillRect(0,0,getWidth(), getHeight());
 		int numCards = CartagenaCardsPanel.this.model.getCards(myPlayer).size();
-		int cardHeight = ((int) ((double) getHeight())/ numCards);
-		int cardsAlreadyDealt = 0;
-		for(SpaceType type: typeOrder)
+		if(numCards > 0)
 		{
-			
-			int numCardsThisType = myCards.get(type);
-			paintCard(numCardsThisType, type, cardsAlreadyDealt*cardHeight, cardHeight, g);
-			
-			cardsAlreadyDealt += numCardsThisType;
+			int cardHeight = ((int) ((double) getHeight())/ numCards);
+			int cardsAlreadyDealt = 0;
+			for(SpaceType type: typeOrder)
+			{
+				
+				int numCardsThisType = myCards.get(type);
+				paintCard(numCardsThisType, type, cardsAlreadyDealt*cardHeight, cardHeight, g);
+				
+				cardsAlreadyDealt += numCardsThisType;
+			}
 		}
-		
 	}
 	
 	private void paintCard(int numCards, SpaceType type, int yTopLeft, int cardHeight, Graphics g)

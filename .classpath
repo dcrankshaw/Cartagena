@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="edu/jhu/dcranks1/cs/oose/cartagena/model/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="CartagenaFramework/CartagenaInterface.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/home/crank/git/Cartagena/CartagenaFramework/doc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/home/crank/git/Cartagena/CartagenaFramework/StandardCartagenaModel.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

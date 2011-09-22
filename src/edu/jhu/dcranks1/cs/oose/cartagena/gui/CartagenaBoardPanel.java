@@ -42,7 +42,6 @@ public class CartagenaBoardPanel extends JPanel {
 	private Map<SpaceType, BufferedImage> boardPictures;
 	private static final int NUM_COLUMNS = 7;
 	private static final int NUM_ROWS = 6;
-	private static final int NUM_SPOTS_PER_COLUMN = 6;
 	private static final int NUM_SPOTS_PER_ROW = 6;
 	private static final int MAX_PIECES_PER_ROW = 4;
 	private static final int MAX_ROWS_PER_SPOT = 6;
